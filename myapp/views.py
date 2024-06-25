@@ -10,8 +10,8 @@ def index(request):
 
 
 def about(request):
-    return render(request, 'myapp/about0.html')
+    return render(request, 'myapp/about.html')
 
 def detail(request, book_id):
     book = get_object_or_404(Book, pk=book_id)
-    return render(request, 'myapp/detail0.html', {'book': book})
+    return render(request, 'myapp/detail.html', {'book': book})

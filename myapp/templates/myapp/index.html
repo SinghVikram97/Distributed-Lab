@@ -1,5 +1,9 @@
 {% extends 'myapp/base.html' %}
 
+{% block myhdg %}
+    <h1>Hello Vikram Singh Bedi</h1>
+{% endblock %}
+
 {% block body_block %}
     <body>
          {% if booklist %}
@@ -13,6 +17,5 @@
         {% else %}
             <strong>There are no available books!</strong>
         {% endif %}
-        <p><a href="{% url 'myapp:about' %}">About page</a></p>
     </body>
 {% endblock %}
