@@ -6,7 +6,7 @@ from myapp.models import Book
 # Create your views here.
 def index(request):
     booklist = Book.objects.all().order_by('id')[:10]
-    return render(request, 'myapp/index0.html', {'booklist': booklist})
+    return render(request, 'myapp/index.html', {'booklist': booklist})
 
 
 def about(request):

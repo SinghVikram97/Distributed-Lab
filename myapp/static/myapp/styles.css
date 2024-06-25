@@ -1,0 +1,25 @@
+/* Default background color, text color, and font size */
+body {
+    background-color: #1d2378;
+    color: #f4f4f5;
+    font-size: 16px;
+}
+
+/* Styles for <h1> tags */
+h1 {
+    font-size: 24px;
+    color: #ffffff;
+    font-style: italic;
+    position: relative;
+}
+
+/* Class for inline display with margin */
+.hbar1 {
+    display: inline;
+    margin: 15px;
+}
+
+/* Optional additional styles */
+a{
+    color: white;
+}
