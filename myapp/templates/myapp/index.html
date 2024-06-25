@@ -1,0 +1,21 @@
+{% extends 'myapp/base.html' %}
+
+{% block myhdg %}
+    <h1>Hello Vikram Singh Bedi</h1>
+{% endblock %}
+
+{% block body_block %}
+    <body>
+         {% if booklist %}
+        <h2>List of Books</h2>
+        <ol>
+            {% for book  in booklist %}
+               <li><a href="{% url 'myapp:detail' book.id %}">{{ book.title }}</a></li>
+            {% endfor %}
+        </ol>
+
+        {% else %}
+            <strong>There are no available books!</strong>
+        {% endif %}
+    </body>
+{% endblock %}

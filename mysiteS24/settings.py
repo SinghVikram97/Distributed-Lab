@@ -55,7 +55,7 @@ ROOT_URLCONF = 'mysiteS24.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
+        'DIRS': [BASE_DIR / 'myapp/templates']
         ,
         'APP_DIRS': True,
         'OPTIONS': {
