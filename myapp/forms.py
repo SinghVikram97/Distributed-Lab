@@ -18,5 +18,14 @@ class SearchForm(forms.Form):
         ('O', 'Other'),
     ]
 
-    name = forms.CharField(max_length=100, required=False)
-    category = forms.ChoiceField(choices=CATEGORY_CHOICES, widget=forms.RadioSelect)
+    name = forms.CharField(label='Your Name', required=False)
+    category = forms.ChoiceField(
+        choices=CATEGORY_CHOICES,
+        label='Select a category:',
+        required=False,
+        widget=forms.RadioSelect
+    )
+    max_price = forms.IntegerField(
+        label='Maximum Price',
+        min_value=0
+    )

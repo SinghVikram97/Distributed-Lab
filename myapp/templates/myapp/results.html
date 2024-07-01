@@ -3,7 +3,12 @@
 {% block body_block %}
     <h1>Search Results</h1>
     <p>Hello {{ name }}!</p>
-    <h2>List of Books in Selected Category</h2>
+    {% if category %}
+        <p>Category: {{ category }}</p>
+    {% else %}
+        <p>Category: All</p>
+    {% endif %}
+    <h2>List of Books</h2>
     <ul>
         {% for book in booklist %}
             <li>{{ book.title }} by {{ book.author }} - {{ book.price }} - Published by {{ book.publisher }}</li>

@@ -45,8 +45,19 @@ def findbooks(request):
         if form.is_valid():
             name = form.cleaned_data['name']
             category = form.cleaned_data['category']
+            max_price = form.cleaned_data['max_price']
 
-            booklist = Book.objects.filter(category=category)
+            if category:
+                booklist = Book.objects.filter(category=category, price__lte=max_price)
+            else:
+                booklist = Book.objects.filter(price__lte=max_price)
+
+            return render(request, 'myapp/results.html', {
+                'name': name,
+                'category': category,
+                'booklist': booklist,
+                'max_price': max_price
+            })
 
             return render(request, 'myapp/results.html', {'name': name, 'booklist': booklist})
         else:
