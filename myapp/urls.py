@@ -8,4 +8,5 @@ urlpatterns = [
     path(r'about/', views.about, name='about'),
     path('<int:book_id>/', views.detail, name='detail'),
     path('feedback/', views.getFeedback, name='feedback'),
+    path('findbooks/', views.findbooks, name='findbooks'),
 ]

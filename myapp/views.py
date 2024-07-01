@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 
-from myapp.forms import FeedbackForm
+from myapp.forms import FeedbackForm, SearchForm
 from myapp.models import Book
 from django.http import HttpResponse
 
@@ -37,3 +37,20 @@ def getFeedback(request):
     else:
         form = FeedbackForm()
         return render(request, 'myapp/feedback.html', {'form': form})
+
+
+def findbooks(request):
+    if request.method == 'POST':
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            category = form.cleaned_data['category']
+
+            booklist = Book.objects.filter(category=category)
+
+            return render(request, 'myapp/results.html', {'name': name, 'booklist': booklist})
+        else:
+            return HttpResponse('Invalid data')
+    else:
+        form = SearchForm()
+        return render(request, 'myapp/findbooks.html', {'form': form})

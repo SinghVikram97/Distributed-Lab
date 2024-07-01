@@ -16,7 +16,7 @@ class Publisher(models.Model):
 
 class Book(models.Model):
     CATEGORY_CHOICES = [
-        ('S', 'Scinece&Tech'),
+        ('S', 'Science&Tech'),
         ('F', 'Fiction'),
         ('B', 'Biography'),
         ('T', 'Travel'),
