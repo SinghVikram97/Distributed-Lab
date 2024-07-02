@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 
-from myapp.forms import FeedbackForm, SearchForm
+from myapp.forms import FeedbackForm, SearchForm, OrderForm
 from myapp.models import Book
 from django.http import HttpResponse
 
@@ -65,3 +65,22 @@ def findbooks(request):
     else:
         form = SearchForm()
         return render(request, 'myapp/findbooks.html', {'form': form})
+
+
+def place_order(request):
+    if request.method == 'POST':
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            order = form.save(commit=False)
+            order.save()
+            form.save_m2m()  # Save the many-to-many data for the form
+            member = order.member
+            if order.order_type == 1:  # If order type is 'Borrow'
+                for book in order.books.all():
+                    member.borrowed_books.add(book)
+            return render(request, 'myapp/order_response.html', {'order': order, 'books': order.books.all()})
+        else:
+            return render(request, 'myapp/placeorder.html', {'form': form})
+    else:
+        form = OrderForm()
+        return render(request, 'myapp/placeorder.html', {'form': form})
