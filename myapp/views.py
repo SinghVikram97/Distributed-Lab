@@ -1,6 +1,6 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 
-from myapp.forms import FeedbackForm, SearchForm, OrderForm
+from myapp.forms import FeedbackForm, SearchForm, OrderForm, ReviewForm
 from myapp.models import Book
 from django.http import HttpResponse
 
@@ -24,19 +24,16 @@ def getFeedback(request):
     if request.method == 'POST':
         form = FeedbackForm(request.POST)
         if form.is_valid():
-            feedback = form.cleaned_data['feedback']
-            if feedback == 'B':
-                choice = 'to borrow books.'
-            elif feedback == 'P':
-                choice = 'to purchase books.'
-            else:
-                choice = 'None.'
-            return render(request, 'myapp/fb_results.html', {'choice': choice})
-        else:
-            return HttpResponse('Invalid data')
+            feedback_choices = form.cleaned_data['feedback']
+            feedback_display = {
+                'B': 'Borrow',
+                'P': 'Purchase'
+            }
+            feedback_full_names = [feedback_display[choice] for choice in feedback_choices]
+            return render(request, 'myapp/fb_results.html', {'choices': feedback_full_names})
     else:
         form = FeedbackForm()
-        return render(request, 'myapp/feedback.html', {'form': form})
+    return render(request, 'myapp/feedback.html', {'form': form})
 
 
 def findbooks(request):
@@ -84,3 +81,22 @@ def place_order(request):
     else:
         form = OrderForm()
         return render(request, 'myapp/placeorder.html', {'form': form})
+
+def review(request):
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            rating = form.cleaned_data['rating']
+            if 1 <= rating <= 5:
+                review = form.save()
+                book = review.book
+                book.num_reviews += 1
+                book.save()
+                return redirect('myapp:index')  # Change 'index' to your actual index view name
+            else:
+                return render(request, 'myapp/review.html', {'form': form, 'error': 'You must enter a rating between 1 and 5!'})
+        else:
+            return render(request, 'myapp/review.html', {'form': form})
+    else:
+        form = ReviewForm()
+        return render(request, 'myapp/review.html', {'form': form})
