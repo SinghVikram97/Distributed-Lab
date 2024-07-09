@@ -1,8 +1,12 @@
+from django.db.models import Avg
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.urls import reverse
 
 from myapp.forms import FeedbackForm, SearchForm, OrderForm, ReviewForm
-from myapp.models import Book
-from django.http import HttpResponse
+from myapp.models import Book, Member, Review
+from django.http import HttpResponse, HttpResponseRedirect
 
 
 # Create your views here.
@@ -82,6 +86,7 @@ def place_order(request):
         form = OrderForm()
         return render(request, 'myapp/placeorder.html', {'form': form})
 
+
 def review(request):
     if request.method == 'POST':
         form = ReviewForm(request.POST)
@@ -94,9 +99,54 @@ def review(request):
                 book.save()
                 return redirect('myapp:index')  # Change 'index' to your actual index view name
             else:
-                return render(request, 'myapp/review.html', {'form': form, 'error': 'You must enter a rating between 1 and 5!'})
+                return render(request, 'myapp/review.html',
+                              {'form': form, 'error': 'You must enter a rating between 1 and 5!'})
         else:
             return render(request, 'myapp/review.html', {'form': form})
     else:
         form = ReviewForm()
         return render(request, 'myapp/review.html', {'form': form})
+
+
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+        if user:
+            if user.is_active:
+                login(request, user)
+                return HttpResponseRedirect(reverse('myapp:index'))
+            else:
+                return HttpResponse('Your account is disabled.')
+        else:
+            return HttpResponse('Invalid login details.')
+    else:
+        return render(request, 'myapp/login.html')
+
+
+@login_required
+def user_logout(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('myapp:index'))
+
+
+@login_required
+def chk_reviews(request, book_id):
+    user = request.user
+    try:
+        member = Member.objects.get(pk=user.pk)
+    except Member.DoesNotExist:
+        member = None
+
+    if member:
+        book = get_object_or_404(Book, pk=book_id)
+        reviews = Review.objects.filter(book=book)
+        if reviews.exists():
+            avg_rating = reviews.aggregate(Avg('rating'))['rating__avg']
+            return render(request, 'myapp/chk_reviews.html', {'book': book, 'avg_rating': avg_rating})
+        else:
+            return render(request, 'myapp/chk_reviews.html',
+                          {'book': book, 'message': 'No reviews submitted for this book.'})
+    else:
+        return render(request, 'myapp/chk_reviews.html', {'message': 'You are not a registered member!'})
